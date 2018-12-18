@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1543163568800.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3562526921",
+    "id" : "4EECA517",
+    "lastKnownWriteTime" : 1544968509,
+    "last_content_update" : 1544968509273,
+    "path" : "C:/Users/Ahmad Abdel-Azim/shinySAR/predictionEquation.R",
+    "project_path" : "predictionEquation.R",
+    "properties" : {
+        "cursorPosition" : "105,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

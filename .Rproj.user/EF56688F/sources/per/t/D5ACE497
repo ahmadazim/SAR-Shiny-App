@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1543335530250.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "942626154",
+    "id" : "D5ACE497",
+    "lastKnownWriteTime" : 1544966088,
+    "last_content_update" : 1544966088033,
+    "path" : "C:/Users/Ahmad Abdel-Azim/shinySAR/app.R",
+    "project_path" : "app.R",
+    "properties" : {
+        "cursorPosition" : "4,18",
+        "scrollLine" : "6",
+        "source_window_id" : ""
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
