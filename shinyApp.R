@@ -33,6 +33,20 @@ ui <- navbarPage(
 
       mainPanel(
         plotOutput("simulate"),
+        textOutput("parameters"),
+        textOutput("sect.text"),
+        textOutput("Nl1.text"),
+        textOutput("Nl2.text"),
+        textOutput("Nl3.text"),
+        textOutput("Ng1.text"),
+        textOutput("Ng2.text"),
+        textOutput("Ng3.text"),
+        textOutput("startPop"),
+        textOutput("startPopFit"),
+        textOutput("maxPop"),
+        textOutput("nDays"),
+        textOutput("thr"),
+        textOutput("mr"),
         textOutput("successRate")
         )
    )
@@ -248,9 +262,66 @@ server <- function(input, output) {
            col=c("dark green", "red", "orange", "yellow"), pch=16, cex = 1.1, xpd = NA, ncol = 2, text.width = c(8,8,8,8), x.intersp = .2)
   })
   
+  output$parameters <- renderText({
+    paste("The following populations parameters are being simulated...")
+  })
+
+  output$sect.text <- renderText({
+    paste("Number of sections: 3")
+  })
+  
+  output$Nl1.text <- renderText({
+    paste("Number of loci in the first section: 3")
+  })
+  
+  output$Nl2.text <- renderText({
+    paste("Number of loci in the second section:", input$Nl2)
+  })
+  
+  output$Nl3.text <- renderText({
+    paste("Number of loci in the third section:", input$Nl3)
+  })
+  
+  output$Ng1.text <- renderText({
+    paste("Number of genes in each locus of the first section:", input$Ng1)
+  })
+  
+  output$Ng2.text <- renderText({
+    paste("Number of genes in each locus of the second section: 10")
+  })
+  
+  output$Ng3.text <- renderText({
+    paste("Number of genes in each locus of the third section:", input$Ng3)
+  })
+  
+  output$startPop <- renderText({
+    paste("Starting Population Size: 300")
+  })
+  
+  output$startPopFit <- renderText({
+    paste("Starting population fitness: 0.51")
+  })
+  
+  output$maxPop <- renderText({
+    paste("Maximum population size during each day: 2000")
+  })
+  
+  output$nDays <- renderText({
+    paste("Number of days being simulated:", input$days)
+  })
+  
+  output$thr <- renderText({
+    paste("Survival threshold (environmental stress): 0.51")
+  })
+
+  output$mr <- renderText({
+    paste("Population mutation rate: 0.001")
+  })
+  
   output$successRate <- renderText({
     paste("These population prameters are estimated to yield a population with a success rate of", predict(lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d), newdata = data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)), "%. Success rate is indicative of such a population's probability of survival.")
-    })
+  })
+  
 }
 
 # Run the application
