@@ -68,6 +68,17 @@ d <- rbind(x1,x2,x3,x4,x5,x6,x7,x8,x9)
 # Construct d with an end field of scenario number
 d$scenario.ms <- rep(1:3, each = 60)
 d$scenario.g <- rep(rep(1:3, each = 20), 3)
+# Construct d with an end field of success rate
+d$success <- 0
+d[d$scenario.ms == 1 & d$scenario.g == 1,"success"] <- 99
+d[d$scenario.ms == 1 & d$scenario.g == 2,"success"] <- 60
+d[d$scenario.ms == 1 & d$scenario.g == 3,"success"] <- 75
+d[d$scenario.ms == 2 & d$scenario.g == 1,"success"] <- 100
+d[d$scenario.ms == 2 & d$scenario.g == 2,"success"] <- 65
+d[d$scenario.ms == 2 & d$scenario.g == 3,"success"] <- 80
+d[d$scenario.ms == 3 & d$scenario.g == 1,"success"] <- 99
+d[d$scenario.ms == 3 & d$scenario.g == 2,"success"] <- 61
+d[d$scenario.ms == 3 & d$scenario.g == 3,"success"] <- 76
 
 
 d.lm <- lm(fit ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
@@ -81,6 +92,8 @@ d.lm1 <- lm(fit.1 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:
 d.lm2 <- lm(fit.2 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
 d.lm3 <- lm(fit.3 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
 
+# Predict success rate from sections
+success.lm <- lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d)
 
 # User input
 Nl1 <- 3; Nl2 <- 6; Nl3 = 10; Ng1 = 6; Ng2 = 10; Ng3 = 12; scenario.ms = 2; scenario.g = 2
@@ -93,9 +106,24 @@ newD3 <- data.frame(days = 1:30, Nl2, Nl3, Ng1, Ng3, scenario.ms, scenario.g)
 
 # predict fitness based on user input 
 fit.pred <- predict(d.lm, newdata = newD)
+for(i in 1:length(fit.pred)){
+  if (fit.pred[i] > 1) fit.pred[i] = 1
+}
+  
 fit1.pred <- predict(d.lm1, newdata = newD1)
+for(i in 1:length(fit1.pred)){
+  if (fit1.pred[i] > 1) fit1.pred[i] = 1
+}
+
 fit2.pred <- predict(d.lm2, newdata = newD2)
+for(i in 1:length(fit2.pred)){
+  if (fit2.pred2[i] > 1) fit2.pred[i] = 1
+}
+
 fit3.pred <- predict(d.lm3, newdata = newD3)
+for(i in 1:length(fit3.pred)){
+  if (fit3.pred[i] > 1) fit3.pred[i] = 1
+}
 
 
 plot(1:30, fit.pred)
