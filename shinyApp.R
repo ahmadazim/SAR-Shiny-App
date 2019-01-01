@@ -20,7 +20,7 @@ ui <- navbarPage(
                     value = 7),
         numericInput("Ng3", "Number of genes in third-section loci",
                     value = 12),
-        sliderInput("days", "Length of Simulation, in Days",
+        sliderInput("days", "Length of Simulation, in days",
                     min = 2,
                     max = 40,
                     value = 30),
@@ -54,34 +54,7 @@ ui <- navbarPage(
   ),
   navbarMenu(
     "Fitness Levels by Section",
-    tabPanel("Overall Genome Fitness Levels",
-             fluidPage(
-               sidebarLayout(
-                 sidebarPanel(
-                   numericInput("Nl2.O", "Number of loci in second section",
-                                value = 6),
-                   numericInput("Nl3.O", "Number of loci in third section",
-                                value = 10),
-                   numericInput("Ng1.O", "Number of genes in first-section loci",
-                                value = 7),
-                   numericInput("Ng3.O", "Number of genes in third-section loci",
-                                value = 12),
-                   sliderInput("days.O", "Length of Simulation, in Days",
-                               min = 2,
-                               max = 40,
-                               value = 30),
-                   sliderInput("ylim.O", label = "y-axis range",
-                               min = 0,
-                               max = 3,
-                               value = c(0, 1.2),
-                               step = 0.1)
-                 ),
-                 
-                 mainPanel(plotOutput("overall"))
-               )
-              )
-    ),
-    tabPanel("Section 1 Fitness Levels",
+      tabPanel("Section 1 Fitness Levels",
              fluidPage(
                sidebarLayout(
                  sidebarPanel(
@@ -168,9 +141,6 @@ ui <- navbarPage(
 
 server <- function(input, output) {
      
-  d.lm <- reactive({
-    lm(fit ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
-  })
   d.lm1 <- reactive({
     lm(fit.1 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
     })
@@ -185,20 +155,19 @@ server <- function(input, output) {
     lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d)
      })
   
-  # construct new data using user input
+  # Construct new data using user input for overall
   newD <- reactive({
     data.frame(days = 1:input$days, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)
-    })
-  newDO <- reactive({
-    data.frame(days = 1:input$days.O, Nl2 = input$Nl2.O, Nl3 = input$Nl3.O, Ng1 = input$Ng1.O, Ng3 = input$Ng3.O)
   })
-  newD1 <- reactive({
+  
+  # construct new data using user input for sections
+  newD1.1 <- reactive({
     data.frame(days = 1:input$days.1, Nl2 = input$Nl2.1, Nl3 = input$Nl3.1, Ng1 = input$Ng1.1, Ng3 = input$Ng3.1)
   })
-  newD2 <- reactive({
+  newD2.2 <- reactive({
     data.frame(days = 1:input$days.2, Nl2 = input$Nl2.2, Nl3 = input$Nl3.2, Ng1 = input$Ng1.2, Ng3 = input$Ng3.2)
   })
-  newD3 <- reactive({
+  newD3.3 <- reactive({
     data.frame(days = 1:input$days.3, Nl2 = input$Nl2.3, Nl3 = input$Nl3.3, Ng1 = input$Ng1.3, Ng3 = input$Ng3.3)
   })
   
@@ -208,56 +177,65 @@ server <- function(input, output) {
   
   
   
-  # predict fitness based on user input 
-  fit.pred <- reactive({
-    predict(d.lm(), newdata = newD())
-    })
-  fit.predO <- reactive({
-    predict(d.lm(), newdata = newDO())
-  })
+  # predict fitness based on user input for overall 
   fit.pred1 <- reactive({
-    predict(d.lm1(), newdata = newD1())
+    predict(d.lm1(), newdata = newD())
   })
   fit.pred2 <- reactive({
-    predict(d.lm2(), newdata = newD2())
+    predict(d.lm2(), newdata = newD())
   })
   fit.pred3 <- reactive({
-    predict(d.lm3(), newdata = newD3())
+    predict(d.lm3(), newdata = newD())
   })
+  fit.pred <- reactive({
+    (fit.pred1() + fit.pred2() + fit.pred3())/3  
+  })
+  
+  # predict fitness based on user input for sect1 
+  fit1.pred1 <- reactive({
+    predict(d.lm1(), newdata = newD1.1())
+  })
+  
+  # predict fitness based on user input for sect2 
+  fit2.pred2 <- reactive({
+    predict(d.lm2(), newdata = newD2.2())
+  })
+  
+  # predict fitness based on user input for sect3 
+  fit3.pred3 <- reactive({
+    predict(d.lm3(), newdata = newD3.3())
+  })
+  
+  
   
   success.pred <- reactive({
     predict(success.lm(), newdata = newD.success)
   })
   
   
-  output$overall <- renderPlot({
-    plot(1:input$days.O, fit.predO(), xlim = c(1, input$days.O), ylim = input$ylim.O, col='dark green', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
-         ylab = 'Overall Fitness', xlab = 'Days', type = "b")
-  })
-  
   output$sect1 <- renderPlot({
-    plot(1:input$days.1, fit.pred1(), xlim = c(1, input$days.1), ylim = input$ylim.1, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days.1, fit1.pred1(), xlim = c(1, input$days.1), ylim = input$ylim.1, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Section 1 Fitness', xlab = 'Days', type = "b")
   })
   
   output$sect2 <- renderPlot({
-    plot(1:input$days.2, fit.pred2(), xlim = c(1, input$days.2), ylim = input$ylim.2, col='dark orange', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days.2, fit2.pred2(), xlim = c(1, input$days.2), ylim = input$ylim.2, col='dark orange', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Section 2 Fitness', xlab = 'Days', type = "b")
   })
   
   output$sect3 <- renderPlot({
-    plot(1:input$days.3, fit.pred3(), xlim = c(1, input$days.3), ylim = input$ylim.3, col='yellow', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days.3, fit3.pred3(), xlim = c(1, input$days.3), ylim = input$ylim.3, col='yellow', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Section 3 Fitness', xlab = 'Days', type = "b")
   })
   
   output$simulate <- renderPlot({
     par(oma = c(4, 1, 1, 1))
     
-    plot(1:input$days, fit.pred(), xlim = c(1, input$days), ylim = input$ylim, col='dark green', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days, fit.pred1(), xlim = c(1, input$days), ylim = input$ylim, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Overall and Section Fitness', xlab = 'Days', type = "b")
-    points(1:input$days.1, fit.pred1(), col = "red", pch=16, cex = 1.5)
-    points(1:input$days.2, fit.pred2(), col = "dark orange", pch=16, cex = 1.5)
-    points(1:input$days.3, fit.pred3(), col = "yellow", pch=16, cex = 1.5)
+    points(1:input$days, fit.pred2(), col = "dark orange", pch=16, cex = 1.5)
+    points(1:input$days, fit.pred3(), col = "yellow", pch=16, cex = 1.5)
+    points(1:input$days, fit.pred(), col = "dark green", pch=16, cex = 1.5)
     legend("bottom", inset = c(0, -0.55), legend=c("Overall Fitness", "Section 1 Fitness", "Section 2 Fitness", "Section 3 Fitness"),
            col=c("dark green", "red", "orange", "yellow"), pch=16, cex = 1.1, xpd = NA, ncol = 2, text.width = c(8,8,8,8), x.intersp = .2)
   })
@@ -275,15 +253,15 @@ server <- function(input, output) {
   })
   
   output$Nl2.text <- renderText({
-    paste("Number of loci in the second section:", input$Nl2)
+    cat("Number of loci in the second section:", input$Nl2)
   })
   
   output$Nl3.text <- renderText({
-    paste("Number of loci in the third section:", input$Nl3)
+    cat("Number of loci in the third section:", input$Nl3)
   })
   
   output$Ng1.text <- renderText({
-    paste("Number of genes in each locus of the first section:", input$Ng1)
+    cat("Number of genes in each locus of the first section:", input$Ng1)
   })
   
   output$Ng2.text <- renderText({
@@ -291,7 +269,7 @@ server <- function(input, output) {
   })
   
   output$Ng3.text <- renderText({
-    paste("Number of genes in each locus of the third section:", input$Ng3)
+    cat("Number of genes in each locus of the third section:", input$Ng3)
   })
   
   output$startPop <- renderText({
@@ -307,7 +285,7 @@ server <- function(input, output) {
   })
   
   output$nDays <- renderText({
-    paste("Number of days being simulated:", input$days)
+    cat("Number of days being simulated:", input$days)
   })
   
   output$thr <- renderText({
@@ -319,7 +297,7 @@ server <- function(input, output) {
   })
   
   output$successRate <- renderText({
-    paste("These population prameters are estimated to yield a population with a success rate of", predict(lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d), newdata = data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)), "%. Success rate is indicative of such a population's probability of survival.")
+    cat("These population prameters are estimated to yield a population with a success rate of", predict(lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d), newdata = data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)), "%. Success rate is indicative of such a population's probability of survival.")
   })
   
 }

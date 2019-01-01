@@ -81,13 +81,12 @@ d[d$scenario.ms == 3 & d$scenario.g == 2,"success"] <- 61
 d[d$scenario.ms == 3 & d$scenario.g == 3,"success"] <- 76
 
 
-d.lm <- lm(fit ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
+
 d.lm1 <- lm(fit.1 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
 d.lm2 <- lm(fit.2 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
 d.lm3 <- lm(fit.3 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
 
 # Introduce scenario and interaction to the LM
-d.lm <- lm(fit ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
 d.lm1 <- lm(fit.1 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
 d.lm2 <- lm(fit.2 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
 d.lm3 <- lm(fit.3 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
@@ -105,11 +104,6 @@ newD2 <- data.frame(days = 1:30, Nl2, Nl3, Ng1, Ng3, scenario.ms, scenario.g)
 newD3 <- data.frame(days = 1:30, Nl2, Nl3, Ng1, Ng3, scenario.ms, scenario.g)
 
 # predict fitness based on user input 
-fit.pred <- predict(d.lm, newdata = newD)
-for(i in 1:length(fit.pred)){
-  if (fit.pred[i] > 1) fit.pred[i] = 1
-}
-  
 fit1.pred <- predict(d.lm1, newdata = newD1)
 for(i in 1:length(fit1.pred)){
   if (fit1.pred[i] > 1) fit1.pred[i] = 1
@@ -125,13 +119,13 @@ for(i in 1:length(fit3.pred)){
   if (fit3.pred[i] > 1) fit3.pred[i] = 1
 }
 
+fit.pred <- (fit1.pred + fit2.pred + fit3.pred)/3
 
-plot(1:30, fit.pred)
-points(1:30, fit1.pred)
+
+plot(1:30, fit1.pred)
 points(1:30, fit2.pred)
 points(1:30, fit3.pred)
-dev.off()
-
+points(1:30, fit.pred)
 
 
 
