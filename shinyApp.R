@@ -184,28 +184,32 @@ server <- function(input, output) {
   
   # predict fitness based on user input for overall 
   fit.pred1 <- reactive({
-    predict(d.lm1(), newdata = newD())
+    putCap(predict(d.lm1(), newdata = newD()))
   })
   fit.pred2 <- reactive({
-    predict(d.lm2(), newdata = newD())
+    putCap(predict(d.lm2(), newdata = newD()))
   })
   fit.pred3 <- reactive({
-    predict(d.lm3(), newdata = newD())
+    putCap(predict(d.lm3(), newdata = newD()))
   })
+  fit.pred <- reactive({
+    (fit.pred1() + fit.pred2() + fit.pred3())/3
+  })
+  
   
   # predict fitness based on user input for sect1 
   fit1.pred1 <- reactive({
-    predict(d.lm1(), newdata = newD1.1())
+    putCap(predict(d.lm1(), newdata = newD1.1()))
   })
   
   # predict fitness based on user input for sect2 
   fit2.pred2 <- reactive({
-    predict(d.lm2(), newdata = newD2.2())
+    putCap(predict(d.lm2(), newdata = newD2.2()))
   })
   
   # predict fitness based on user input for sect3 
   fit3.pred3 <- reactive({
-    predict(d.lm3(), newdata = newD3.3())
+    putCap(predict(d.lm3(), newdata = newD3.3()))
   })
   
   
@@ -216,28 +220,28 @@ server <- function(input, output) {
   
   
   output$sect1 <- renderPlot({
-    plot(1:input$days.1, putCap(fit1.pred1()), xlim = c(1, input$days.1), ylim = input$ylim.1, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days.1, fit1.pred1(), xlim = c(1, input$days.1), ylim = input$ylim.1, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Section 1 Fitness', xlab = 'Days', type = "b")
   })
   
   output$sect2 <- renderPlot({
-    plot(1:input$days.2, putCap(fit2.pred2()), xlim = c(1, input$days.2), ylim = input$ylim.2, col='dark orange', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days.2, fit2.pred2(), xlim = c(1, input$days.2), ylim = input$ylim.2, col='dark orange', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Section 2 Fitness', xlab = 'Days', type = "b")
   })
   
   output$sect3 <- renderPlot({
-    plot(1:input$days.3, putCap(fit3.pred3()), xlim = c(1, input$days.3), ylim = input$ylim.3, col='yellow', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days.3, fit3.pred3(), xlim = c(1, input$days.3), ylim = input$ylim.3, col='yellow', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Section 3 Fitness', xlab = 'Days', type = "b")
   })
   
   output$simulate <- renderPlot({
     par(oma = c(4, 1, 1, 1))
     
-    plot(1:input$days, putCap(fit.pred1()), xlim = c(1, input$days), ylim = input$ylim, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+    plot(1:input$days, fit.pred1(), xlim = c(1, input$days), ylim = input$ylim, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
          ylab = 'Overall and Section Fitness', xlab = 'Days', type = "b")
-    points(1:input$days, putCap(fit.pred2()), col = "dark orange", pch=16, cex = 1.5)
-    points(1:input$days, putCap(fit.pred3()), col = "yellow", pch=16, cex = 1.5)
-    points(1:input$days, (putCap(fit.pred1()) + putCap(fit.pred2()) + putCap(fit.pred3()))/3, col = "dark green", pch=16, cex = 1.5)
+    points(1:input$days, fit.pred2(), col = "dark orange", pch=16, cex = 1.5)
+    points(1:input$days, fit.pred3(), col = "yellow", pch=16, cex = 1.5)
+    points(1:input$days, fit.pred(), col = "dark green", pch=16, cex = 1.5)
     legend("bottom", inset = c(0, -0.55), legend=c("Overall Fitness", "Section 1 Fitness", "Section 2 Fitness", "Section 3 Fitness"),
            col=c("dark green", "red", "orange", "yellow"), pch=16, cex = 1.1, xpd = NA, ncol = 2, text.width = c(8,8,8,8), x.intersp = .2)
   })
