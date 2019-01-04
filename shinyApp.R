@@ -17,14 +17,18 @@ ui <- navbarPage(
   fluidPage(
    sidebarLayout(
       sidebarPanel(
-        numericInput("Nl2", "Number of loci in second section",
+        numericInput("Ng1", "Number of genes in first section",
+                     value = 1),
+        numericInput("Ng2", "Number of genes in second section",
+                     value = 7),
+        numericInput("Ng3", "Number of genes in third section",
+                     value = 15),
+        numericInput("Nl1", "Number of mutation sites in first-section genes",
+                     value = 1),
+        numericInput("Nl2", "Number of mutation sites in second-section genes",
                      value = 6),
-        numericInput("Nl3", "Number of loci in third section",
-                     value = 10),
-        numericInput("Ng1", "Number of genes in first-section loci",
-                    value = 7),
-        numericInput("Ng3", "Number of genes in third-section loci",
-                    value = 12),
+        numericInput("Nl3", "Number of mutation sites in third-section genes",
+                     value = 11),
         sliderInput("days", "Length of Simulation, in days",
                     min = 2,
                     max = 40,
@@ -63,18 +67,22 @@ ui <- navbarPage(
              fluidPage(
                sidebarLayout(
                  sidebarPanel(
-                   numericInput("Nl2.1", "Number of loci in second section",
-                                value = 6),
-                   numericInput("Nl3.1", "Number of loci in third section",
-                                value = 10),
-                   numericInput("Ng1.1", "Number of genes in first-section loci",
+                   numericInput("Ng1.1", "Number of genes in first section",
                                 value = 7),
-                   numericInput("Ng3.1", "Number of genes in third-section loci",
+                   numericInput("Ng2.1", "Number of genes in second section",
+                                value = 10),
+                   numericInput("Ng3.1", "Number of genes in third section",
                                 value = 12),
+                   numericInput("Nl1.1", "Number of mutation sites in first-section genes",
+                                value = 6),
+                   numericInput("Nl2.1", "Number of mutation sites in second-section genes",
+                                value = 8),
+                   numericInput("Nl3.1", "Number of mutation sites in third-section genes",
+                                value = 10),
                    sliderInput("days.1", "Length of Simulation, in Days",
                                min = 2,
                                max = 40,
-                               value = 30),
+                               value = 30), 
                    sliderInput("ylim.1", label = "y-axis range",
                                min = 0,
                                max = 3,
@@ -90,14 +98,18 @@ ui <- navbarPage(
              fluidPage(
                sidebarLayout(
                  sidebarPanel(
-                   numericInput("Nl2.2", "Number of loci in second section",
-                                value = 6),
-                   numericInput("Nl3.2", "Number of loci in third section",
-                                value = 10),
-                   numericInput("Ng1.2", "Number of genes in first-section loci",
+                   numericInput("Ng1.2", "Number of genes in first section",
                                 value = 7),
-                   numericInput("Ng3.2", "Number of genes in third-section loci",
+                   numericInput("Ng2.2", "Number of genes in second section",
+                                value = 10),
+                   numericInput("Ng3.2", "Number of genes in third section",
                                 value = 12),
+                   numericInput("Nl1.2", "Number of mutation sites in first-section genes",
+                                value = 6),
+                   numericInput("Nl2.2", "Number of mutation sites in second-section genes",
+                                value = 8),
+                   numericInput("Nl3.2", "Number of mutation sites in third-section genes",
+                                value = 10),
                    sliderInput("days.2", "Length of Simulation, in Days",
                                min = 2,
                                max = 40,
@@ -117,14 +129,18 @@ ui <- navbarPage(
              fluidPage(
                sidebarLayout(
                  sidebarPanel(
-                   numericInput("Nl2.3", "Number of loci in second section",
-                                value = 6),
-                   numericInput("Nl3.3", "Number of loci in third section",
-                                value = 10),
-                   numericInput("Ng1.3", "Number of genes in first-section loci",
+                   numericInput("Ng1.3", "Number of genes in first section",
                                 value = 7),
-                   numericInput("Ng3.3", "Number of genes in third-section loci",
+                   numericInput("Ng2.3", "Number of genes in second section",
+                                value = 10),
+                   numericInput("Ng3.3", "Number of genes in third section",
                                 value = 12),
+                   numericInput("Nl1.3", "Number of mutation sites in first-section genes",
+                                value = 6),
+                   numericInput("Nl2.3", "Number of mutation sites in second-section genes",
+                                value = 8),
+                   numericInput("Nl3.3", "Number of mutation sites in third-section genes",
+                                value = 10),
                    sliderInput("days.3", "Length of Simulation, in Days",
                                min = 2,
                                max = 40,
@@ -147,37 +163,37 @@ ui <- navbarPage(
 server <- function(input, output) {
      
   d.lm1 <- reactive({
-    lm(fit.1 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
+    lm(fit.1 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
     })
   d.lm2 <- reactive({
-    lm(fit.2 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
+    lm(fit.2 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
     })
   d.lm3 <- reactive({
-    lm(fit.3 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
+    lm(fit.3 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
     })
   
   success.lm <- reactive({
-    lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d)
+    lm(success ~ + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
      })
   
   # Construct new data using user input for overall
   newD <- reactive({
-    data.frame(days = 1:input$days, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)
+    data.frame(days = 1:input$days, Nl1 = input$Nl1, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng2 = input$Ng2, Ng3 = input$Ng3)
   })
   
   # construct new data using user input for sections
   newD1.1 <- reactive({
-    data.frame(days = 1:input$days.1, Nl2 = input$Nl2.1, Nl3 = input$Nl3.1, Ng1 = input$Ng1.1, Ng3 = input$Ng3.1)
+    data.frame(days = 1:input$days.1, Nl1 = input$Nl1.1, Nl2 = input$Nl2.1, Nl3 = input$Nl3.1, Ng1 = input$Ng1.1, Ng2 = input$Ng2.1, Ng3 = input$Ng3.1)
   })
   newD2.2 <- reactive({
-    data.frame(days = 1:input$days.2, Nl2 = input$Nl2.2, Nl3 = input$Nl3.2, Ng1 = input$Ng1.2, Ng3 = input$Ng3.2)
+    data.frame(days = 1:input$days.2, Nl1 = input$Nl1.2, Nl2 = input$Nl2.2, Nl3 = input$Nl3.2, Ng2 = input$Ng2.2, Ng1 = input$Ng1.2, Ng3 = input$Ng3.2)
   })
   newD3.3 <- reactive({
-    data.frame(days = 1:input$days.3, Nl2 = input$Nl2.3, Nl3 = input$Nl3.3, Ng1 = input$Ng1.3, Ng3 = input$Ng3.3)
+    data.frame(days = 1:input$days.3, Nl1 = input$Nl1.3, Nl2 = input$Nl2.3, Nl3 = input$Nl3.3, Ng1 = input$Ng1.3, Ng2 = input$Ng2.3, Ng3 = input$Ng3.3)
   })
   
   newD.success <- reactive({
-    data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)
+    data.frame(Nl1 = input$Nl1, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng2 = input$Ng2, Ng3 = input$Ng3)
   })
   
   
@@ -255,27 +271,27 @@ server <- function(input, output) {
   })
   
   output$Nl1.text <- renderText({
-    paste("Number of loci in the first section: 3")
+    paste("Number of mutation sites in the first-section genes:", input$Nl1)
   })
   
   output$Nl2.text <- renderText({
-    cat("Number of loci in the second section:", input$Nl2)
+    paste("Number of mutation sites in the second-section genes:", input$Nl2)
   })
   
   output$Nl3.text <- renderText({
-    cat("Number of loci in the third section:", input$Nl3)
+    paste("Number of mutation sites in the third-section genes:", input$Nl3)
   })
   
   output$Ng1.text <- renderText({
-    cat("Number of genes in each locus of the first section:", input$Ng1)
+    paste("Number of genes in the first section:", input$Ng1)
   })
   
   output$Ng2.text <- renderText({
-    paste("Number of genes in each locus of the second section: 10")
+    paste("Number of genes in the second section:", input$Ng2)
   })
   
   output$Ng3.text <- renderText({
-    cat("Number of genes in each locus of the third section:", input$Ng3)
+    paste("Number of genes in the third section:", input$Ng3)
   })
   
   output$startPop <- renderText({
@@ -291,7 +307,7 @@ server <- function(input, output) {
   })
   
   output$nDays <- renderText({
-    cat("Number of days being simulated:", input$days)
+    paste("Number of days being simulated:", input$days)
   })
   
   output$thr <- renderText({
@@ -303,7 +319,7 @@ server <- function(input, output) {
   })
   
   output$successRate <- renderText({
-    cat("These population prameters are estimated to yield a population with a success rate of", predict(lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d), newdata = data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)), "%. Success rate is indicative of such a population's probability of survival.")
+    paste("These population prameters are estimated to yield a population with a success rate of", predict(lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d), newdata = data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)), "%. Success rate is indicative of such a population's probability of survival.")
   })
   
 }

@@ -47,7 +47,11 @@ allScenarios <- c("Nl.11015.Ng.101010",
                   "Nl.1610.Ng.101010", 
                   "Nl.1610.Ng.21015",  
                   "Nl.1610.Ng.61012",
-                  "Nl.3612.Ng.21015")
+                  "Nl.3612.Ng.21015",
+                  "Nl.11010.Ng.1055",
+                  "Nl.11515.Ng.1055",
+                  #"Nl.11515.Ng.1055.Rm5",
+                  "Nl.151515.Ng.1055")
 
 x1 <- flt(Nl.124.Ng.21015, c(1,2,4), c(2,10,15), nDay = 20, gen.pd = 24)
 x2 <- flt(Nl.124.Ng.61012, c(1,2,4), c(6,10,12), nDay = 20, gen.pd = 24)
@@ -61,30 +65,35 @@ x7 <- flt(Nl.11015.Ng.21015, c(1,10,15), c(2,10,15), nDay = 20, gen.pd = 24)
 x8 <- flt(Nl.11015.Ng.61012, c(1,10,15), c(6,10,12), nDay = 20, gen.pd = 24)
 x9 <- flt(Nl.11015.Ng.101010, c(1,10,15), c(10,10,10), nDay = 20, gen.pd = 24)
 
-# x10 <- flt(Nl.3612.Ng.21015, c(3,6,12), c(3,6,12), nDay = 20, gen.pd = 24)
-# x13 <- flt(Nl.124.Ng.4816, c(1,2,4), c(4,8,16), nDay = 20, gen.pd = 24)
+x10 <- flt(Nl.11010.Ng.1055, c(1,10,10), c(10,5,5), nDay = 20, gen.pd = 24)
+x11 <- flt(Nl.11515.Ng.1055, c(1,15,15), c(10,5,5), nDay = 20, gen.pd = 24) 
+x12 <- flt(Nl.151515.Ng.1055, c(15,15,15), c(10,5,5), nDay = 20, gen.pd = 24)
 
-d <- rbind(x1,x2,x3,x4,x5,x6,x7,x8,x9)
+
+d <- rbind(x1,x2,x3,x4,x5,x6,x7,x8,x9, x10, x11, x12)
 # Construct d with an end field of scenario number
-d$scenario.ms <- rep(1:3, each = 60)
-d$scenario.g <- rep(rep(1:3, each = 20), 3)
+  # d$scenario.ms <- rep(1:3, each = 60)
+  # d$scenario.g <- rep(rep(1:3, each = 20), 3)
+
 # Construct d with an end field of success rate
 d$success <- 0
-d[d$scenario.ms == 1 & d$scenario.g == 1,"success"] <- 99
-d[d$scenario.ms == 1 & d$scenario.g == 2,"success"] <- 60
-d[d$scenario.ms == 1 & d$scenario.g == 3,"success"] <- 75
-d[d$scenario.ms == 2 & d$scenario.g == 1,"success"] <- 100
-d[d$scenario.ms == 2 & d$scenario.g == 2,"success"] <- 65
-d[d$scenario.ms == 2 & d$scenario.g == 3,"success"] <- 80
-d[d$scenario.ms == 3 & d$scenario.g == 1,"success"] <- 99
-d[d$scenario.ms == 3 & d$scenario.g == 2,"success"] <- 61
-d[d$scenario.ms == 3 & d$scenario.g == 3,"success"] <- 76
+d[d$Nl1 == 1 & d$Nl2 == 2 & d$Nl3 == 4 & d$Ng1 == 2 & d$Ng2 == 10 & d$Ng3 == 15,"success"] <- 99
+d[d$Nl1 == 1 & d$Nl2 == 2 & d$Nl3 == 4 & d$Ng1 == 6 & d$Ng2 == 10 & d$Ng3 == 12,"success"] <- 60
+d[d$Nl1 == 1 & d$Nl2 == 2 & d$Nl3 == 4 & d$Ng1 == 10 & d$Ng2 == 10 & d$Ng3 == 10,"success"] <- 75
+d[d$Nl1 == 1 & d$Nl2 == 6 & d$Nl3 == 10 & d$Ng1 == 2 & d$Ng2 == 10 & d$Ng3 == 15,"success"] <- 100
+d[d$Nl1 == 1 & d$Nl2 == 6 & d$Nl3 == 10 & d$Ng1 == 6 & d$Ng2 == 10 & d$Ng3 == 12,"success"] <- 65
+d[d$Nl1 == 1 & d$Nl2 == 6 & d$Nl3 == 10 & d$Ng1 == 10 & d$Ng2 == 10 & d$Ng3 == 10,"success"] <- 80
+d[d$Nl1 == 1 & d$Nl2 == 10 & d$Nl3 == 15 & d$Ng1 == 2 & d$Ng2 == 10 & d$Ng3 == 15,"success"] <- 99
+d[d$Nl1 == 1 & d$Nl2 == 10 & d$Nl3 == 15 & d$Ng1 == 6 & d$Ng2 == 10 & d$Ng3 == 12,"success"] <- 61
+d[d$Nl1 == 1 & d$Nl2 == 10 & d$Nl3 == 15 & d$Ng1 == 10 & d$Ng2 == 10 & d$Ng3 == 10,"success"] <- 76
+d[d$Nl1 == 1 & d$Nl2 == 10 & d$Nl3 == 10 & d$Ng1 == 10 & d$Ng2 == 5 & d$Ng3 == 5,"success"] <- 71
+d[d$Nl1 == 1 & d$Nl2 == 15 & d$Nl3 == 15 & d$Ng1 == 10 & d$Ng2 == 5 & d$Ng3 == 5,"success"] <- 63
+d[d$Nl1 == 15 & d$Nl2 == 15 & d$Nl3 == 15 & d$Ng1 == 10 & d$Ng2 == 5 & d$Ng3 == 5,"success"] <- 11
 
 
-
-d.lm1 <- lm(fit.1 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
-d.lm2 <- lm(fit.2 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
-d.lm3 <- lm(fit.3 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, d)
+d.lm1 <- lm(fit.1 ~ poly(days,2, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
+d.lm2 <- lm(fit.2 ~ poly(days,2, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
+d.lm3 <- lm(fit.3 ~ poly(days,2, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
 
 # Introduce scenario and interaction to the LM
 d.lm1 <- lm(fit.1 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
@@ -92,7 +101,7 @@ d.lm2 <- lm(fit.2 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:
 d.lm3 <- lm(fit.3 ~ poly(days,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
 
 # Predict success rate from sections
-success.lm <- lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d)
+success.lm <- lm(success ~ Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
 
 # User input
 Nl1 <- 3; Nl2 <- 6; Nl3 = 10; Ng1 = 6; Ng2 = 10; Ng3 = 12; scenario.ms = 2; scenario.g = 2
