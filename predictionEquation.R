@@ -91,9 +91,9 @@ d[d$Nl1 == 1 & d$Nl2 == 15 & d$Nl3 == 15 & d$Ng1 == 10 & d$Ng2 == 5 & d$Ng3 == 5
 d[d$Nl1 == 15 & d$Nl2 == 15 & d$Nl3 == 15 & d$Ng1 == 10 & d$Ng2 == 5 & d$Ng3 == 5,"success"] <- 11
 
 
-d.lm1 <- lm(fit.1 ~ poly(days,2, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
-d.lm2 <- lm(fit.2 ~ poly(days,2, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
-d.lm3 <- lm(fit.3 ~ poly(days,2, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
+d.lm1 <- lm(fit.1 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
+d.lm2 <- lm(fit.2 ~ days + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
+d.lm3 <- lm(fit.3 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
 
 # Introduce scenario and interaction to the LM
 d.lm1 <- lm(fit.1 ~ poly(days,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + scenario.ms:scenario.g, d)
