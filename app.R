@@ -1,7 +1,5 @@
 
 library(shiny)
-library(DT)
-library(SAR)
 library(shinythemes)
 putCap <- function(x){
   x[x > 1] = 1
