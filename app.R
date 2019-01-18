@@ -12,56 +12,52 @@ ui <- navbarPage(
   theme = shinytheme("sandstone"),
   "Effect of Bacterial Genotype on Growth Levels Over Multiple Exposures",
   tabPanel("Simulation",
-  fluidPage(
-   sidebarLayout(
-      sidebarPanel(
-        numericInput("Ng1", "Number of genes in first section",
-                     value = 1),
-        numericInput("Ng2", "Number of genes in second section",
-                     value = 7),
-        numericInput("Ng3", "Number of genes in third section",
-                     value = 15),
-        numericInput("Nl1", "Number of mutation sites in first-section genes",
-                     value = 1),
-        numericInput("Nl2", "Number of mutation sites in second-section genes",
-                     value = 6),
-        numericInput("Nl3", "Number of mutation sites in third-section genes",
-                     value = 11),
-        sliderInput("days", "Length of Simulation, in days",
-                    min = 2,
-                    max = 40,
-                    value = 30),
-        sliderInput("ylim", label = "y-axis range",
-                    min = 0,
-                    max = 3,
-                    value = c(0, 1.2),
-                    step = 0.1)
-      ),
+           fluidPage(
+             sidebarLayout(
+               sidebarPanel(
+                 numericInput("Ng1", "Number of genes in first section",
+                              value = 1),
+                 numericInput("Ng2", "Number of genes in second section",
+                              value = 7),
+                 numericInput("Ng3", "Number of genes in third section",
+                              value = 15),
+                 numericInput("Nl1", "Number of mutation sites in first-section genes",
+                              value = 1),
+                 numericInput("Nl2", "Number of mutation sites in second-section genes",
+                              value = 6),
+                 numericInput("Nl3", "Number of mutation sites in third-section genes",
+                              value = 11),
+                 sliderInput("days", "Length of Simulation, in days",
+                             min = 2,
+                             max = 40,
+                             value = 30),
+                 sliderInput("ylim", label = "y-axis range",
+                             min = 0,
+                             max = 3,
+                             value = c(0, 1.2),
+                             step = 0.1)
+               ),
 
-      mainPanel(
-        plotOutput("simulate"),
-        textOutput("parameters"),
-        textOutput("sect.text"),
-        textOutput("Nl1.text"),
-        textOutput("Nl2.text"),
-        textOutput("Nl3.text"),
-        textOutput("Ng1.text"),
-        textOutput("Ng2.text"),
-        textOutput("Ng3.text"),
-        textOutput("startPop"),
-        textOutput("startPopFit"),
-        textOutput("maxPop"),
-        textOutput("nDays"),
-        textOutput("thr"),
-        textOutput("mr"),
-        textOutput("successRate")
-        )
-   )
-  )
+               mainPanel(
+                 plotOutput("simulate"),
+                 
+                 tags$h3("The following populations parameters are being simulated..."),
+                 tags$h5(tags$b("Number of sections:"), "3"),
+                 tags$h5(tags$b("Starting Population Size:"), "300"),
+                 tags$h5(tags$b("Starting population fitness:"), "0.51"),
+                 tags$h5(tags$b("Maximum population size during each day:"), "2000"),
+                 tags$h5(tags$b("Survival threshold (environmental stress:"), "0.51"),
+                 tags$h5(tags$b("Population mutation rate:"), "0.001"),
+                 
+                 tags$h4(tags$b("Likelihood of survival:")),
+                 textOutput("successRate")
+               )
+             )
+           )
   ),
   navbarMenu(
     "Fitness Levels by Section",
-      tabPanel("Section 1 Fitness Levels",
+    tabPanel("Section 1 Fitness Levels",
              fluidPage(
                sidebarLayout(
                  sidebarPanel(
@@ -150,29 +146,29 @@ ui <- navbarPage(
                                step = 0.1)
                  ),
                  
-                  mainPanel(plotOutput("sect3"))
+                 mainPanel(plotOutput("sect3"))
                )
              )
     ) 
   ), collapsible = TRUE
 )
-  
+
 
 server <- function(input, output) {
-     
+  
   d.lm1 <- reactive({
     lm(fit.1 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
-    })
+  })
   d.lm2 <- reactive({
     lm(fit.2 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
-    })
+  })
   d.lm3 <- reactive({
     lm(fit.3 ~ poly(days,3, raw = T) + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
-    })
+  })
   
   success.lm <- reactive({
     lm(success ~ + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
-     })
+  })
   
   # Construct new data using user input for overall
   newD <- reactive({
@@ -235,91 +231,34 @@ server <- function(input, output) {
   
   output$sect1 <- renderPlot({
     plot(1:input$days.1, fit1.pred1(), xlim = c(1, input$days.1), ylim = input$ylim.1, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
-         ylab = 'Section 1 Fitness', xlab = 'Days', type = "b")
+         ylab = 'Section 1 Fitness', xlab = 'Days', type = "b", lty = 2)
   })
   
   output$sect2 <- renderPlot({
     plot(1:input$days.2, fit2.pred2(), xlim = c(1, input$days.2), ylim = input$ylim.2, col='dark orange', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
-         ylab = 'Section 2 Fitness', xlab = 'Days', type = "b")
+         ylab = 'Section 2 Fitness', xlab = 'Days', type = "b", lty = 2)
   })
   
   output$sect3 <- renderPlot({
     plot(1:input$days.3, fit3.pred3(), xlim = c(1, input$days.3), ylim = input$ylim.3, col='yellow', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
-         ylab = 'Section 3 Fitness', xlab = 'Days', type = "b")
+         ylab = 'Section 3 Fitness', xlab = 'Days', type = "b", lty = 2)
   })
   
   output$simulate <- renderPlot({
-    par(oma = c(4, 1, 1, 1))
+    par(oma = c(4, 1, 1, 1), mar = c(6, 5, 4, 2.5))
     
     plot(1:input$days, fit.pred1(), xlim = c(1, input$days), ylim = input$ylim, col='red', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
-         ylab = 'Overall and Section Fitness', xlab = 'Days', type = "b")
-    points(1:input$days, fit.pred2(), col = "dark orange", pch=16, cex = 1.5)
-    points(1:input$days, fit.pred3(), col = "yellow", pch=16, cex = 1.5)
-    points(1:input$days, fit.pred(), col = "dark green", pch=16, cex = 1.5)
-    legend("bottom", inset = c(0, -0.55), legend=c("Overall Fitness", "Section 1 Fitness", "Section 2 Fitness", "Section 3 Fitness"),
+         ylab = 'Overall and Section Fitness', xlab = 'Days', type = "b", lty = 2)
+    points(1:input$days, fit.pred2(), col = "dark orange", pch=16, cex = 1.5, type = "b", lty = 2)
+    points(1:input$days, fit.pred3(), col = "yellow", pch=16, cex = 1.5, type = "b", lty = 2)
+    points(1:input$days, fit.pred(), col = "dark green", pch=16, cex = 1.5, type = "b", lty = 2)
+    legend("bottom", inset = c(0, -0.65), legend=c("Overall Fitness", "Section 1 Fitness", "Section 2 Fitness", "Section 3 Fitness"),
            col=c("dark green", "red", "orange", "yellow"), pch=16, cex = 1.1, xpd = NA, ncol = 2, text.width = c(8,8,8,8), x.intersp = .2)
-  })
-  
-  output$parameters <- renderText({
-    paste("The following populations parameters are being simulated...")
-  })
-
-  output$sect.text <- renderText({
-    paste("Number of sections: 3")
-  })
-  
-  output$Nl1.text <- renderText({
-    paste("Number of mutation sites in the first-section genes:", input$Nl1)
-  })
-  
-  output$Nl2.text <- renderText({
-    paste("Number of mutation sites in the second-section genes:", input$Nl2)
-  })
-  
-  output$Nl3.text <- renderText({
-    paste("Number of mutation sites in the third-section genes:", input$Nl3)
-  })
-  
-  output$Ng1.text <- renderText({
-    paste("Number of genes in the first section:", input$Ng1)
-  })
-  
-  output$Ng2.text <- renderText({
-    paste("Number of genes in the second section:", input$Ng2)
-  })
-  
-  output$Ng3.text <- renderText({
-    paste("Number of genes in the third section:", input$Ng3)
-  })
-  
-  output$startPop <- renderText({
-    paste("Starting Population Size: 300")
-  })
-  
-  output$startPopFit <- renderText({
-    paste("Starting population fitness: 0.51")
-  })
-  
-  output$maxPop <- renderText({
-    paste("Maximum population size during each day: 2000")
-  })
-  
-  output$nDays <- renderText({
-    paste("Number of days being simulated:", input$days)
-  })
-  
-  output$thr <- renderText({
-    paste("Survival threshold (environmental stress): 0.51")
-  })
-
-  output$mr <- renderText({
-    paste("Population mutation rate: 0.001")
   })
   
   output$successRate <- renderText({
     paste("These population prameters are estimated to yield a population with a success rate of", predict(lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d), newdata = data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)), "%. Success rate is indicative of such a population's probability of survival.")
   })
-  
 }
 
 # Run the application
