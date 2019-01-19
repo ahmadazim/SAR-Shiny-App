@@ -1,6 +1,7 @@
 
 library(shiny)
 library(shinythemes)
+library(DT)
 putCap <- function(x){
   x[x > 1] = 1
   x[x < 0] = 0
@@ -41,15 +42,15 @@ ui <- navbarPage(
                mainPanel(
                  plotOutput("simulate"),
                  
-                 tags$h3("The following populations parameters are being simulated..."),
+                 tags$h3("The following populations parameters are being simulated:"),
                  tags$h5(tags$b("Number of sections:"), "3"),
                  tags$h5(tags$b("Starting Population Size:"), "300"),
                  tags$h5(tags$b("Starting population fitness:"), "0.51"),
                  tags$h5(tags$b("Maximum population size during each day:"), "2000"),
                  tags$h5(tags$b("Survival threshold (environmental stress:"), "0.51"),
                  tags$h5(tags$b("Population mutation rate:"), "0.001"),
-                 
-                 tags$h4(tags$b("Likelihood of survival:")),
+                 tags$br(),
+                 tags$h3("Likelihood of survival:"),
                  textOutput("successRate")
                )
              )
@@ -84,8 +85,12 @@ ui <- navbarPage(
                                step = 0.1)
                  ),
                  
-                 mainPanel(plotOutput("sect1"))
-               )
+                 mainPanel(tabsetPanel(
+                   tabPanel("Fitness Plot", plotOutput("sect1")),
+                   tabPanel("Statistics and Summary", 
+                            DT::dataTableOutput("tabFit.1"),
+                            DT::dataTableOutput("predictFit.1"))
+               )))
              )
     ),
     tabPanel("Section 2 Fitness Levels",
@@ -115,8 +120,12 @@ ui <- navbarPage(
                                step = 0.1)
                  ),
                  
-                 mainPanel(plotOutput("sect2"))
-               )
+                 mainPanel(tabsetPanel(
+                   tabPanel("Fitness Plot", plotOutput("sect2")),
+                   tabPanel("Statistics and Summary", 
+                            DT::dataTableOutput("tabFit.2"),
+                            DT::dataTableOutput("predictFit.2"))
+                 )))
              )
     ),
     tabPanel("Section 3 Fitness Levels",
@@ -146,8 +155,12 @@ ui <- navbarPage(
                                step = 0.1)
                  ),
                  
-                 mainPanel(plotOutput("sect3"))
-               )
+                 mainPanel(tabsetPanel(
+                   tabPanel("Fitness Plot", plotOutput("sect3")),
+                   tabPanel("Statistics and Summary", 
+                            DT::dataTableOutput("tabFit.3"),
+                            DT::dataTableOutput("predictFit.3"))
+                 )))
              )
     ) 
   ), collapsible = TRUE
@@ -168,6 +181,17 @@ server <- function(input, output) {
   
   success.lm <- reactive({
     lm(success ~ + Nl1 + Nl2 + Nl3 + Ng1 + Ng2 + Ng3, d)
+  })
+  
+  # Data table panel displays 
+  output$tabFit.1 <- DT::renderDataTable({
+    format.data.frame(data.frame(summary(d.lm1())$coefficients), digits = 4)
+  })
+  output$tabFit.2 <- DT::renderDataTable({
+    format.data.frame(data.frame(summary(d.lm2())$coefficients), digits = 4)
+  })
+  output$tabFit.3 <- DT::renderDataTable({
+    format.data.frame(data.frame(summary(d.lm3())$coefficients), digits = 4)
   })
   
   # Construct new data using user input for overall
@@ -212,9 +236,17 @@ server <- function(input, output) {
     putCap(predict(d.lm1(), newdata = newD1.1()))
   })
   
+  output$predictFit.1 <- DT::renderDataTable({
+    format.data.frame(data.frame(fit.pred1()), digits = 4)
+  })
+  
   # predict fitness based on user input for sect2 
   fit2.pred2 <- reactive({
     putCap(predict(d.lm2(), newdata = newD2.2()))
+  })
+  
+  output$predictFit.2 <- DT::renderDataTable({
+    format.data.frame(data.frame(fit.pred2()), digits = 4)
   })
   
   # predict fitness based on user input for sect3 
@@ -222,6 +254,9 @@ server <- function(input, output) {
     putCap(predict(d.lm3(), newdata = newD3.3()))
   })
   
+  output$predictFit.3 <- DT::renderDataTable({
+    format.data.frame(data.frame(fit.pred3()), digits = 4)
+  })
   
   
   success.pred <- reactive({
