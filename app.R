@@ -178,7 +178,9 @@ ui <- navbarPage(
           numericInput("Nl3.g", "Number of mutation sites in third-section genes",
                        value = 10),
           numericInput("day.g", "Days of Exposure to Antibiotics",
-                      value = 3),
+                      value = 3,
+                      max = 20,
+                      min = 0),
           numericInput("genpd", "Number of Generations per Day",
                         value = 24),
           sliderInput("ylim.g", label = "y-axis range",
@@ -187,7 +189,8 @@ ui <- navbarPage(
                       value = c(0, 2000),
                       step = 100)
           ),
-          mainPanel(plotOutput("PopSize"))
+          mainPanel(tags$h2("Population Growth of Bacteria Wihin Each Day of Exposure to Antibiotic Treatment"), 
+                    plotOutput("PopSize"))
       ))
     ), collapsible = TRUE
 )
@@ -326,7 +329,7 @@ server <- function(input, output) {
     lm(fit ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + Day, genDay[genDay$Day == input$day.g,])
   })    
   dataGenFit <- reactive({
-    data.frame(Day = input$day.g, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3, gen.number = 1:input$genpd)
+    data.frame(Day = input$day.g, Nl2 = input$Nl2.g, Nl3 = input$Nl3.g, Ng1 = input$Ng1.g, Ng3 = input$Ng3.g, gen.number = 1:input$genpd)
   })
   fitGen.pred <- reactive({
     predict(fitGen.lm(), newdata = dataGenFit())
@@ -336,7 +339,7 @@ server <- function(input, output) {
     lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit + Day, genDay[genDay$Day == input$day.g,])
   })
   dataGenDay <- reactive({
-    data.frame(Day = input$day.g, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3, gen.number = 1:input$genpd, fit = fitGen.pred())
+    data.frame(Day = input$day.g, Nl2 = input$Nl2.g, Nl3 = input$Nl3.g, Ng1 = input$Ng1.g, Ng3 = input$Ng3.g, gen.number = 1:input$genpd, fit = fitGen.pred())
   })
   genDay.pred <- reactive({
     predict(genDay.lm(), newdata = dataGenDay())
