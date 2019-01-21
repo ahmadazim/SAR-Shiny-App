@@ -7,7 +7,7 @@ putCap <- function(x, max, min){
   x[x < min] = min
   return(x)
 }
-
+options(shiny.sanitize.errors = TRUE)
 
 ui <- navbarPage(
   theme = shinytheme("sandstone"),
@@ -182,12 +182,7 @@ ui <- navbarPage(
                       max = 20,
                       min = 0),
           numericInput("genpd", "Number of Generations per Day",
-                        value = 24),
-          sliderInput("ylim.g", label = "y-axis range",
-                      min = 0,
-                      max = 3000,
-                      value = c(0, 2000),
-                      step = 100)
+                        value = 24)
           ),
           mainPanel(tags$h2("Population Growth of Bacteria Wihin Each Day of Exposure to Antibiotic Treatment"), 
                     plotOutput("PopSize"))
@@ -332,7 +327,7 @@ server <- function(input, output) {
     data.frame(Day = input$day.g, Nl2 = input$Nl2.g, Nl3 = input$Nl3.g, Ng1 = input$Ng1.g, Ng3 = input$Ng3.g, gen.number = 1:input$genpd)
   })
   fitGen.pred <- reactive({
-    predict(fitGen.lm(), newdata = dataGenFit())
+    suppressWarnings(predict(fitGen.lm(), newdata = dataGenFit()))
   })
   
   genDay.lm <- reactive({
@@ -342,12 +337,13 @@ server <- function(input, output) {
     data.frame(Day = input$day.g, Nl2 = input$Nl2.g, Nl3 = input$Nl3.g, Ng1 = input$Ng1.g, Ng3 = input$Ng3.g, gen.number = 1:input$genpd, fit = fitGen.pred())
   })
   genDay.pred <- reactive({
-    predict(genDay.lm(), newdata = dataGenDay())
+    suppressWarnings(predict(genDay.lm(), newdata = dataGenDay())/2000 *100)
   })
   
   output$PopSize <- renderPlot({
-    plot(1:input$genpd, putCap(genDay.pred(), 2000, 0), ylim = input$ylim.g, col='navy blue', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
-         ylab = 'Population Size', xlab = 'Generation Number', type = "b", lty = 2)
+    par(mar = c(5,5,4,2))
+    plot(1:input$genpd, putCap(genDay.pred(), 100, 0), ylim = c(0,100), col='navy blue', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+         ylab = 'Population Density (%)', xlab = 'Generation Number', type = "b", lty = 2)
   }) 
 }
 
