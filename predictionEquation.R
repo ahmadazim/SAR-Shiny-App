@@ -38,6 +38,106 @@ flt <- function(scenario, Nl.vec, Ng.vec, nDay, gen.pd) {
   d
 }
 
+
+# All scenarios with same maxPsize = 2000 (modeling populations within day)
+allScenarios.Day <- c("Nl.11015.Ng.101010",
+                      "Nl.11015.Ng.21015", 
+                      "Nl.11015.Ng.61012", 
+                      "Nl.124.Ng.101010",  
+                      "Nl.124.Ng.21015",   
+                      "Nl.124.Ng.61012",   
+                      "Nl.1610.Ng.101010", 
+                      "Nl.1610.Ng.21015",  
+                      "Nl.1610.Ng.61012")
+
+
+# y1 <- as.data.frame(apply(Nl.11015.Ng.101010, c(1,2), mean))
+# colnames(y1) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+# y1$Nl1 <- 1; y1$Nl2 <- 10; y1$Nl3 <- 15; y1$Ng1 <- 10; y1$Ng2 <- 10; y1$Ng3 <- 10; y1$SR <- 76
+# y1$gen.number <- rep(1:24); y1$Day <- rep(1:20, each = 24)
+y1 <- as.data.frame(flaten2D(Nl.11015.Ng.101010, Nl = c(1,10,15), Ng = c(10,10,10)))
+y1$SR <- 76; y1$gen.number <- rep(1:24); y1$Day <- rep(1:20, each = 24)
+
+y2 <- as.data.frame(apply(Nl.11015.Ng.21015, c(1,2), mean))
+colnames(y2) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y2$Nl1 <- 1; y2$Nl2 <- 10; y2$Nl3 <- 15; y2$Ng1 <- 2; y2$Ng2 <- 10; y2$Ng3 <- 15; y2$SR <- 99
+y2$gen.number <- rep(1:24); y2$Day <- rep(1:20, each = 24)
+
+y3 <- as.data.frame(apply(Nl.11015.Ng.61012, c(1,2), mean))
+colnames(y3) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y3$Nl1 <- 1; y3$Nl2 <- 10; y3$Nl3 <- 15; y3$Ng1 <- 6; y3$Ng2 <- 10; y3$Ng3 <- 12; y3$SR <- 61
+y3$gen.number <- rep(1:24); y3$Day <- rep(1:20, each = 24)
+
+y4 <- as.data.frame(apply(Nl.124.Ng.101010, c(1,2), mean))
+colnames(y4) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y4$Nl1 <- 1; y4$Nl2 <- 2; y4$Nl3 <- 4; y4$Ng1 <- 10; y4$Ng2 <- 10; y4$Ng3 <- 10; y4$SR <- 75
+y4$gen.number <- rep(1:24); y4$Day <- rep(1:20, each = 24)
+
+y5 <- as.data.frame(apply(Nl.124.Ng.21015, c(1,2), mean))
+colnames(y5) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y5$Nl1 <- 1; y5$Nl2 <- 2; y5$Nl3 <- 4; y5$Ng1 <- 2; y5$Ng2 <- 10; y5$Ng3 <- 15; y5$SR <- 99
+y5$gen.number <- rep(1:24); y5$Day <- rep(1:20, each = 24)
+
+y6 <- as.data.frame(apply(Nl.124.Ng.61012, c(1,2), mean))
+colnames(y6) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y6$Nl1 <- 1; y6$Nl2 <- 2; y6$Nl3 <- 4; y6$Ng1 <- 6; y6$Ng2 <- 10; y6$Ng3 <- 12; y6$SR <- 60
+y6$gen.number <- rep(1:24); y6$Day <- rep(1:20, each = 24)
+
+y7 <- as.data.frame(apply(Nl.1610.Ng.101010, c(1,2), mean))
+colnames(y7) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y7$Nl1 <- 1; y7$Nl2 <- 6; y7$Nl3 <- 10; y7$Ng1 <- 10; y7$Ng2 <- 10; y7$Ng3 <- 10; y7$SR <- 80
+y7$gen.number <- rep(1:24); y7$Day <- rep(1:20, each = 24)
+
+y8 <- as.data.frame(apply(Nl.1610.Ng.21015, c(1,2), mean))
+colnames(y8) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y8$Nl1 <- 1; y8$Nl2 <- 6; y8$Nl3 <- 10; y8$Ng1 <- 2; y8$Ng2 <- 10; y8$Ng3 <- 15; y8$SR <- 100
+y8$gen.number <- rep(1:24); y8$Day <- rep(1:20, each = 24)
+
+y9 <- as.data.frame(apply(Nl.1610.Ng.61012, c(1,2), mean))
+colnames(y9) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+y9$Nl1 <- 1; y9$Nl2 <- 6; y9$Nl3 <- 10; y9$Ng1 <- 6; y9$Ng2 <- 10; y9$Ng3 <- 12; y9$SR <- 65
+y9$gen.number <- rep(1:24); y9$Day <- rep(1:20, each = 24)
+
+# y10 <- as.data.frame(apply(Nl.11010.Ng.1055, c(1,2), mean))
+# colnames(y10) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+# y10$Nl1 <- 1; y10$Nl2 <- 10; y10$Nl3 <- 10; y10$Ng1 <- 10; y10$Ng2 <- 5; y10$Ng3 <- 5; y10$SR <- 71
+# y10$gen.number <- rep(1:24); y10$Day <- rep(1:20, each = 24)
+
+genDay <- rbind(y1,y2,y3,y4,y5,y6,y7,y8,y9)
+
+fitGen.lm <- lm(fit ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + gen.number%in%Day, genDay)
+dataGenFit <- data.frame(Day = 3, Nl2 = 6, Nl3 = 10, Ng1 = 10, Ng3 = 10, gen.number = 1:24)
+fitGen.pred <- predict(fitGen.lm, newdata = dataGenFit)
+
+genDay.lm <- lm(ni ~ poly(gen.number,3, raw = T) + fit + Day, genDay)
+dataGenDay <- data.frame(Day = 3, gen.number = 1:24, fit = fitGen.pred)
+genDay.pred <- predict(genDay.lm, newdata = dataGenDay)
+
+
+
+
+
+#plotting y_ generations/day results
+plotSigmoid <- function(avgScenario, gen.pd, nDay, tt){
+  plot(avgScenario$gen.number, avgScenario$ni, main = tt)
+  lines(avgScenario[1:24,]$gen.number, predict(lm(ni ~ poly(gen.number, 3), avgScenario[avgScenario$Day == 1,])))
+  for(i in 1:nDay){
+    lines(avgScenario[(i*24+1):((i+1)*24),]$gen.number, avgScenario[(i*24+1):((i+1)*24),]$ni)
+  }
+}
+
+plotSigmoid(y1,24,20, "Nl.11015.Ng.101010")
+plotSigmoid(y2,24,20, "Nl.11015.Ng.21015")
+plotSigmoid(y3,24,20, "Nl.11015.Ng.61012")
+plotSigmoid(y4,24,20, "Nl.124.Ng.101010")
+plotSigmoid(y5,24, 20, "Nl.124.Ng.21015")
+plotSigmoid(y6,24, 20, "Nl.124.Ng.61012")
+plotSigmoid(y7,24, 20, "Nl.1610.Ng.101010")
+plotSigmoid(y8,24, 20, "Nl.1610.Ng.21015")
+plotSigmoid(y9,24, 20, "Nl.1610.Ng.61012")
+
+
+
 allScenarios <- c("Nl.11015.Ng.101010",
                   "Nl.11015.Ng.21015", 
                   "Nl.11015.Ng.61012", 
@@ -47,11 +147,10 @@ allScenarios <- c("Nl.11015.Ng.101010",
                   "Nl.1610.Ng.101010", 
                   "Nl.1610.Ng.21015",  
                   "Nl.1610.Ng.61012",
-                  "Nl.3612.Ng.21015",
-                  "Nl.11010.Ng.1055",
-                  "Nl.11515.Ng.1055",
+                  "Nl.11010.Ng.1055",  #Rm = 0.003, maxPsize = 10000
+                  "Nl.11515.Ng.1055",  #Rm = 0.003, maxPsize = 10000
                   #"Nl.11515.Ng.1055.Rm5",
-                  "Nl.151515.Ng.1055")
+                  "Nl.151515.Ng.1055") #Rm = 0.003, maxPsize = 10000
 
 x1 <- flt(Nl.124.Ng.21015, c(1,2,4), c(2,10,15), nDay = 20, gen.pd = 24)
 x2 <- flt(Nl.124.Ng.61012, c(1,2,4), c(6,10,12), nDay = 20, gen.pd = 24)

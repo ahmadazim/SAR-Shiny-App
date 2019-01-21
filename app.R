@@ -2,9 +2,9 @@
 library(shiny)
 library(shinythemes)
 library(DT)
-putCap <- function(x){
-  x[x > 1] = 1
-  x[x < 0] = 0
+putCap <- function(x, max, min){
+  x[x > max] = max
+  x[x < min] = min
   return(x)
 }
 
@@ -163,7 +163,33 @@ ui <- navbarPage(
                  )))
              )
     ) 
-  ), collapsible = TRUE
+  ), 
+  tabPanel(
+    "Generations within Day",
+    fluidPage(
+      sidebarLayout(
+        sidebarPanel(
+          numericInput("Ng1.g", "Number of genes in first section",
+                       value = 7),
+          numericInput("Ng3.g", "Number of genes in third section",
+                       value = 12),
+          numericInput("Nl2.g", "Number of mutation sites in second-section genes",
+                       value = 8),
+          numericInput("Nl3.g", "Number of mutation sites in third-section genes",
+                       value = 10),
+          numericInput("day.g", "Days of Exposure to Antibiotics",
+                      value = 5),
+          numericInput("genpd", "Number of Generations per Day",
+                        value = 24),
+          sliderInput("ylim.g", label = "y-axis range",
+                      min = 0,
+                      max = 3000,
+                      value = c(0, 2000),
+                      step = 100)
+          ),
+          mainPanel(plotOutput("PopSize"))
+      ))
+    ), collapsible = TRUE
 )
 
 
@@ -218,13 +244,13 @@ server <- function(input, output) {
   
   # predict fitness based on user input for overall 
   fit.pred1 <- reactive({
-    putCap(predict(d.lm1(), newdata = newD()))
+    putCap(predict(d.lm1(), newdata = newD()), 1,0)
   })
   fit.pred2 <- reactive({
-    putCap(predict(d.lm2(), newdata = newD()))
+    putCap(predict(d.lm2(), newdata = newD()), 1,0)
   })
   fit.pred3 <- reactive({
-    putCap(predict(d.lm3(), newdata = newD()))
+    putCap(predict(d.lm3(), newdata = newD()), 1,0)
   })
   fit.pred <- reactive({
     (fit.pred1() + fit.pred2() + fit.pred3())/3
@@ -233,7 +259,7 @@ server <- function(input, output) {
   
   # predict fitness based on user input for sect1 
   fit1.pred1 <- reactive({
-    putCap(predict(d.lm1(), newdata = newD1.1()))
+    putCap(predict(d.lm1(), newdata = newD1.1()), 1,0)
   })
   
   output$predictFit.1 <- DT::renderDataTable({
@@ -242,7 +268,7 @@ server <- function(input, output) {
   
   # predict fitness based on user input for sect2 
   fit2.pred2 <- reactive({
-    putCap(predict(d.lm2(), newdata = newD2.2()))
+    putCap(predict(d.lm2(), newdata = newD2.2()), 1,0)
   })
   
   output$predictFit.2 <- DT::renderDataTable({
@@ -251,7 +277,7 @@ server <- function(input, output) {
   
   # predict fitness based on user input for sect3 
   fit3.pred3 <- reactive({
-    putCap(predict(d.lm3(), newdata = newD3.3()))
+    putCap(predict(d.lm3(), newdata = newD3.3()), 1,0)
   })
   
   output$predictFit.3 <- DT::renderDataTable({
@@ -294,6 +320,32 @@ server <- function(input, output) {
   output$successRate <- renderText({
     paste("These population prameters are estimated to yield a population with a success rate of", predict(lm(success ~ Nl2 + Nl3 + Ng1 + Ng3, d), newdata = data.frame(Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3)), "%. Success rate is indicative of such a population's probability of survival.")
   })
+  
+## Generations in Each Day Plot
+  fitGen.lm <- reactive({
+    lm(fit ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + Day, genDay[genDay$Day == input$day.g,])
+  })    
+  dataGenFit <- reactive({
+    data.frame(Day = input$day.g, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3, gen.number = 1:input$genpd)
+  })
+  fitGen.pred <- reactive({
+    predict(fitGen.lm(), newdata = dataGenFit())
+  })
+  
+  genDay.lm <- reactive({
+    lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit + Day, genDay[genDay$Day == input$day.g,])
+  })
+  dataGenDay <- reactive({
+    data.frame(Day = input$day.g, Nl2 = input$Nl2, Nl3 = input$Nl3, Ng1 = input$Ng1, Ng3 = input$Ng3, gen.number = 1:input$genpd, fit = fitGen.pred())
+  })
+  genDay.pred <- reactive({
+    predict(genDay.lm(), newdata = dataGenDay())
+  })
+  
+  output$PopSize <- renderPlot({
+    plot(1:input$genpd, putCap(genDay.pred(), 2000, 0), ylim = input$ylim.g, col='navy blue', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
+         ylab = 'Population Size', xlab = 'Generation Number', type = "b", lty = 2)
+  }) 
 }
 
 # Run the application
