@@ -178,7 +178,7 @@ ui <- navbarPage(
           numericInput("Nl3.g", "Number of mutation sites in third-section genes",
                        value = 10),
           numericInput("day.g", "Days of Exposure to Antibiotics",
-                      value = 5),
+                      value = 3),
           numericInput("genpd", "Number of Generations per Day",
                         value = 24),
           sliderInput("ylim.g", label = "y-axis range",
