@@ -51,10 +51,10 @@ allScenarios.Day <- c("Nl.11015.Ng.101010",
                       "Nl.1610.Ng.61012")
 
 
-# y1 <- as.data.frame(apply(Nl.11015.Ng.101010, c(1,2), mean))
-# colnames(y1) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
-# y1$Nl1 <- 1; y1$Nl2 <- 10; y1$Nl3 <- 15; y1$Ng1 <- 10; y1$Ng2 <- 10; y1$Ng3 <- 10; y1$SR <- 76
-# y1$gen.number <- rep(1:24); y1$Day <- rep(1:20, each = 24)
+ y1 <- as.data.frame(apply(Nl.11015.Ng.101010, c(1,2), mean))
+ colnames(y1) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
+ y1$Nl1 <- 1; y1$Nl2 <- 10; y1$Nl3 <- 15; y1$Ng1 <- 10; y1$Ng2 <- 10; y1$Ng3 <- 10; y1$SR <- 76
+ y1$gen.number <- rep(1:24); y1$Day <- rep(1:20, each = 24)
 
 # y2 <- as.data.frame(apply(Nl.11015.Ng.21015, c(1,2), mean))
 # colnames(y2) <- c("ni", "fit", "fit.1", "fit.2", "fit.3")
@@ -132,11 +132,11 @@ y9$SR <- 65; y9$gen.number <- rep(1:24); y9$Day <- rep(1:20, each = 24)
 
 genDay <- rbind(y1,y2,y3,y4,y5,y6,y7,y8,y9)
 
-fitGen.lm <- lm(fit ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + Day, genDay[genDay$Day == 2,]) #input whatever day trying to predict 
+fitGen.lm <- lm(fit ~ poly(gen.number,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, genDay[genDay$Day == 2,]) #input whatever day trying to predict 
 dataGenFit <- data.frame(Day = 2, Nl2 = 6, Nl3 = 10, Ng1 = 10, Ng3 = 10, gen.number = 1:24)
 fitGen.pred <- predict(fitGen.lm, newdata = dataGenFit)
 
-genDay.lm <- lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit + Day, genDay[genDay$Day == 2,]) #input whatever day trying to predict 
+genDay.lm <- lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit, genDay[genDay$Day == 2,]) #input whatever day trying to predict 
 dataGenDay <- data.frame(Day = 2, Nl2 = 6, Nl3 = 10, Ng1 = 10, Ng3 = 10, gen.number = 1:24, fit = fitGen.pred)
 genDay.pred <- predict(genDay.lm, newdata = dataGenDay)
 
@@ -162,6 +162,13 @@ plotSigmoid(y6,24, 20, "Nl.124.Ng.61012")
 plotSigmoid(y7,24, 20, "Nl.1610.Ng.101010")
 plotSigmoid(y8,24, 20, "Nl.1610.Ng.21015")
 plotSigmoid(y9,24, 20, "Nl.1610.Ng.61012")
+
+
+##Parent sigmoid
+sigmoid <- function(x){
+  100 / (1 + exp(-x+12))
+}
+plot(1:24, sigmoid(1:24), type = "l", lty = 2, lwd = 3, col = "red")
 
 
 

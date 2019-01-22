@@ -7,6 +7,11 @@ putCap <- function(x, max, min){
   x[x < min] = min
   return(x)
 }
+
+sigmoid <- function(x){
+  100 / (1 + exp(-x+12))
+}
+
 options(shiny.sanitize.errors = TRUE)
 
 ui <- navbarPage(
@@ -209,13 +214,15 @@ server <- function(input, output) {
   
   # Data table panel displays 
   output$tabFit.1 <- DT::renderDataTable({
-    format.data.frame(data.frame(summary(d.lm1())$coefficients), digits = 4)
+    data.frame(round(summary(d.lm1())$coefficients, 4))
   })
+  #output$tabFit.1()[,1] <- c("Overall Mean", "Linear Component of Day", "Quadratic Component of Day", "Cubic Component of Day", "First-section Mutation Sites", "Second-section Mutation Sites", "Third-section Mutation Sites", "First-section Genes", "Second-section Genes", "Third-section Genes")
+  
   output$tabFit.2 <- DT::renderDataTable({
-    format.data.frame(data.frame(summary(d.lm2())$coefficients), digits = 4)
+    data.frame(round(summary(d.lm2())$coefficients, 4))
   })
   output$tabFit.3 <- DT::renderDataTable({
-    format.data.frame(data.frame(summary(d.lm3())$coefficients), digits = 4)
+    data.frame(round(summary(d.lm3())$coefficients, 4))
   })
   
   # Construct new data using user input for overall
@@ -321,7 +328,7 @@ server <- function(input, output) {
   
 ## Generations in Each Day Plot
   fitGen.lm <- reactive({
-    lm(fit ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + Day, genDay[genDay$Day == input$day.g,])
+    lm(fit ~ poly(gen.number,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, genDay[genDay$Day == input$day.g,])
   })    
   dataGenFit <- reactive({
     data.frame(Day = input$day.g, Nl2 = input$Nl2.g, Nl3 = input$Nl3.g, Ng1 = input$Ng1.g, Ng3 = input$Ng3.g, gen.number = 1:input$genpd)
@@ -331,7 +338,7 @@ server <- function(input, output) {
   })
   
   genDay.lm <- reactive({
-    lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit + Day, genDay[genDay$Day == input$day.g,])
+    lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit, genDay[genDay$Day == input$day.g,])
   })
   dataGenDay <- reactive({
     data.frame(Day = input$day.g, Nl2 = input$Nl2.g, Nl3 = input$Nl3.g, Ng1 = input$Ng1.g, Ng3 = input$Ng3.g, gen.number = 1:input$genpd, fit = fitGen.pred())
@@ -341,10 +348,13 @@ server <- function(input, output) {
   })
   
   output$PopSize <- renderPlot({
-    par(mar = c(5,5,4,2))
+    par(mar = c(10,5,4,2), xpd = NA)
     plot(1:input$genpd, putCap(genDay.pred(), 100, 0), ylim = c(0,100), col='navy blue', pch=16, cex = 2, cex.lab = 1.7, cex.axis = 1.5, 
-         ylab = 'Population Density (%)', xlab = 'Generation Number', type = "b", lty = 2)
-  }) 
+          ylab = 'Population Density (%)', xlab = 'Generation Number', type = "b", lty = 2, lwd = 2)
+    lines(1:24, sigmoid(1:24), type = "l", lty = 3, lwd = 3, col = "indianred")
+    legend(15, -50, pch=c(16,NA), col = c("navyblue", "indianred"), 
+           legend=c("Population Growth", "Parent Logistic Function"), cex = 1, pt.cex = c(1,1), lty=c(2,3), lwd=c(2,3))
+  })
 }
 
 # Run the application
