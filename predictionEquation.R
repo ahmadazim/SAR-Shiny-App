@@ -136,7 +136,7 @@ fitGen.lm <- lm(fit ~ poly(gen.number,2, raw = T) + Nl2 + Nl3 + Ng1 + Ng3, genDa
 dataGenFit <- data.frame(Day = 2, Nl2 = 6, Nl3 = 10, Ng1 = 10, Ng3 = 10, gen.number = 1:24)
 fitGen.pred <- predict(fitGen.lm, newdata = dataGenFit)
 
-genDay.lm <- lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit, genDay[genDay$Day == 2,]) #input whatever day trying to predict 
+genDay.glm <- glm(as.factor(ni) ~ as.factor(gen.number) + as.factor(Nl2) + as.factor(Nl3) + as.factor(Ng1) + as.factor(Ng3) + as.factor(fit), data = genDay[as.factor(genDay$Day) == 2,], family = binomial(link = "logit")) #input whatever day trying to predict 
 dataGenDay <- data.frame(Day = 2, Nl2 = 6, Nl3 = 10, Ng1 = 10, Ng3 = 10, gen.number = 1:24, fit = fitGen.pred)
 genDay.pred <- predict(genDay.lm, newdata = dataGenDay)
 

@@ -16,7 +16,7 @@ options(shiny.sanitize.errors = TRUE)
 
 ui <- navbarPage(
   theme = shinytheme("sandstone"),
-  "Effect of Bacterial Genotype on Growth Levels Over Multiple Exposures",
+  "Effect of Genome Complexity on Resistance Patterns Over Multiple Exposures",
   tabPanel("Simulation",
            fluidPage(
              sidebarLayout(
@@ -338,7 +338,7 @@ server <- function(input, output) {
   })
   
   genDay.lm <- reactive({
-    lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit, genDay[genDay$Day == input$day.g,])
+    genDay.lm <- lm(ni ~ poly(gen.number,3, raw = T) + Nl2 + Nl3 + Ng1 + Ng3 + fit, data = genDay[genDay$Day == input$day.g,], family = binomial(link = "logit")) 
   })
   dataGenDay <- reactive({
     data.frame(Day = input$day.g, Nl2 = input$Nl2.g, Nl3 = input$Nl3.g, Ng1 = input$Ng1.g, Ng3 = input$Ng3.g, gen.number = 1:input$genpd, fit = fitGen.pred())
