@@ -10,7 +10,7 @@ library(shiny)
 runGitHub("ahmadazim/SAR-Shiny-App", "rstudio")
 ```
 
-**Method 2:** download the source code and run the app/
+**Method 2:** download the source code and run the app\
 First download the git repository (for example, to "~/SAR-Shiny-App").
 ```r
 # Run the following in RStudio console:
